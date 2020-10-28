@@ -15,14 +15,18 @@ namespace ArgsBypass
             if (args.Length == 0)
                 return;
 
-            string bypassedArgs = string.Join(" ", args);
+            File.AppendAllText(logFilePath, $"ArgsBypass was called with args:" + Environment.NewLine);
+            File.AppendAllText(logFilePath, string.Join(" ", args) + Environment.NewLine);
 
-            File.AppendAllText(logFilePath, $"ArgsBypass was called with args: \"{bypassedArgs}\"" + Environment.NewLine);
+            string[] bypassedArgs = args.Select(arg => arg.Replace("^\\", "/")).ToArray();
+
+            File.AppendAllText(logFilePath, $"Replacing slashes:" + Environment.NewLine);
+            File.AppendAllText(logFilePath, string.Join(" ", bypassedArgs) + Environment.NewLine);
 
             try
             {
                 string proicessFilePath = args[0];
-                string processArgs = string.Join(" ", args.Skip(1));
+                string processArgs = string.Join(" ", bypassedArgs.Skip(1));
 
                 File.AppendAllText(logFilePath, $"Starting {proicessFilePath} with args {processArgs}..." + Environment.NewLine);
 
